@@ -1,9 +1,23 @@
 import re
 import os
+import sys
 
-# Define the input and output file paths
-input_file = "nav.adoc"
-output_file = "refined.adoc"
+# Ensure a file is provided as an argument
+if len(sys.argv) < 2:
+    print("Usage: python script.py <input_file>")
+    sys.exit(1)
+
+# Get the input file from command line
+input_file = sys.argv[1]
+
+# Validate input file existence
+if not os.path.isfile(input_file):
+    print(f"Error: File '{input_file}' not found.")
+    sys.exit(1)
+
+# Generate output filename by appending '-book' before the extension
+base_name, ext = os.path.splitext(input_file)
+output_file = f"{base_name}-book{ext}"
 
 # Base directory for pages (assumed structure)
 pages_dir = "pages"
