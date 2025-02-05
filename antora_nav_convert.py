@@ -1,3 +1,5 @@
+#!/usr/bin/python3
+
 import re
 import os
 import sys
@@ -23,6 +25,13 @@ output_file = f"{base_name}-book{ext}"
 pages_dir = "pages"
 os.makedirs(pages_dir, exist_ok=True)
 
+# Read book structure snippet
+book_structure_file = "book_structure_snippet.adoc"
+book_structure_content = ""
+if os.path.isfile(book_structure_file):
+    with open(book_structure_file, "r") as bs_file:
+        book_structure_content = bs_file.read() + "\n\n"
+
 # Read the original file
 with open(input_file, "r") as file:
     content = file.read()
@@ -35,6 +44,7 @@ modules = set(re.findall(r"xref:(module-\d{2}\.adoc)", content))
 
 # Write the refined AsciiDoc file
 with open(output_file, "w") as refined:
+    refined.write(book_structure_content)
     refined.write("= Documentation Book\n")
     refined.write("Author Name\n")
     refined.write("v1.0\n")
