@@ -1,8 +1,7 @@
-#!/usr/bin/python3
-
 import re
 import os
 import sys
+import yaml
 
 # Ensure a file is provided as an argument
 if len(sys.argv) < 2:
@@ -25,12 +24,39 @@ output_file = f"{base_name}-book{ext}"
 pages_dir = "pages"
 os.makedirs(pages_dir, exist_ok=True)
 
+# Load book variables from book_vars.yml
+book_vars_file = "book_vars.yml"
+book_vars = {
+    "REPLACE_SUBJECT": "Default Subject",
+    "REPLACE_DESCRIPTION": "Default Description",
+    "REPLACE_CREATOR": "Author: Default Creator"
+}
+
+if os.path.isfile(book_vars_file):
+    with open(book_vars_file, "r") as vars_file:
+        book_vars.update(yaml.safe_load(vars_file))
+else:
+    # Generate a sample book_vars.yml if it doesn't exist
+    sample_vars = {
+        "REPLACE_SUBJECT": "Sample Subject",
+        "REPLACE_DESCRIPTION": "Sample Description",
+        "REPLACE_CREATOR": "Author: Sample Creator"
+    }
+    with open(book_vars_file, "w") as vars_file:
+        yaml.dump(sample_vars, vars_file)
+    print(f"Sample '{book_vars_file}' created. Please edit it with your values.")
+
 # Read book structure snippet
 book_structure_file = "book_structure_snippet.adoc"
 book_structure_content = ""
 if os.path.isfile(book_structure_file):
     with open(book_structure_file, "r") as bs_file:
         book_structure_content = bs_file.read() + "\n\n"
+        book_structure_content = book_structure_content.replace("<REPLACE_SUBJECT>", book_vars["REPLACE_SUBJECT"])
+        book_structure_content = book_structure_content.replace("<REPLACE_DESCRIPTION>", book_vars["REPLACE_DESCRIPTION"])
+        book_structure_content = book_structure_content.replace("<REPLACE_CREATOR>", book_vars["REPLACE_CREATOR"])
+else:
+    print(f"Warning: '{book_structure_file}' not found. Using default headers.\n")
 
 # Read the original file
 with open(input_file, "r") as file:
@@ -58,6 +84,9 @@ with open(output_file, "w") as refined:
                 mod_file.write(f"= {module.replace('.adoc', '').title()}\n\n")
                 mod_file.write("== Break-Fix Activity\n\n")
                 mod_file.write("== Guided Steps\n")
+            print(f"Created new module: {module_path}")
+        else:
+            print(f"Module already exists: {module_path}")
 
         refined.write(f"include::{pages_dir}/{module}[leveloffset=+1]\n")
 

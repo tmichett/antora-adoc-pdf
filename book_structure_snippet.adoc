@@ -1,9 +1,8 @@
 = {subject}
-:subject: <Subject for cover goes here>
-:description:  <Description for cover goes here>
-Travis Michette <tmichett@redhat.com>
+:subject: <REPLACE_SUBJECT>
+:description:  <REPLACE_DESCRIPTION>
+<REPLACE_CREATOR>
 :doctype: book
-:customer:  GLS
 :listing-caption: Listing
 :toc:
 :toclevels: 7
